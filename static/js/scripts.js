@@ -472,3 +472,30 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+const comparadorForm = document.getElementById('comparador-form');
+    if (comparadorForm) {
+        console.log("Formulário comparador encontrado, anexando event listener.");
+        comparadorForm.addEventListener('submit', handleComparadorSubmit);
+    } else {
+        console.error("Formulário comparador não encontrado. ID 'comparador-form' incorreto ou script carregado antes do DOM.");
+    }
+    // ************************************************
+
+    // Event Listener para o formulário de histórico (se existir e estiver na página)
+    const historicoForm = document.getElementById('historico-form');
+    if (historicoForm) {
+        historicoForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão
+            fetchAndDisplayHistorico();
+        });
+        // Carregar histórico inicial para o ativo padrão ou primeiro ativo
+        fetchAndDisplayHistorico(); // Chama ao carregar a página
+    }
+
+    // Event Listener para o formulário de simulador (se existir e estiver na página)
+    const simuladorForm = document.getElementById('simulador-form');
+    if (simuladorForm) {
+        simuladorForm.addEventListener('submit', handleSimuladorSubmit);
+    }
+;
