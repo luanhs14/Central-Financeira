@@ -49,26 +49,13 @@ def format_currency_br(value, is_percentage=False, decimal_places=2):
         return 'N/A'
 
     if is_percentage:
-        # Usa Intl.NumberFormat para formatar o número, depois adiciona o '%'
-        # Este filtro é usado em Jinja2 e não tem acesso direto a Intl.NumberFormat.
-        # Precisamos de uma formatação Python pura para Jinja.
-        formatted_value = f"{{:.{decimal_places}f}}".format(val_float)
-        # Substitui ponto por vírgula para decimais e adiciona separador de milhares
-        parts = formatted_value.split('.')
-        integer_part = parts[0]
-        decimal_part = parts[1] if len(parts) > 1 else ''
-        
-        # Adiciona separador de milhares para a parte inteira (ex: 1.234)
-        formatted_integer = '{:,.0f}'.format(float(integer_part)).replace(',', 'X').replace('.', ',').replace('X', '.')
-        
-        if decimal_part:
-            return f"{formatted_integer},{decimal_part}%"
-        else:
-            return f"{formatted_integer}%"
+        # Para percentual, formata com casas decimais e adiciona %
+        formatted_value = f"{val_float:.{decimal_places}f}"
+        # Substitui ponto por vírgula para decimais
+        formatted_value = formatted_value.replace('.', ',')
+        return f"{formatted_value}%"
     else:
-        # Para moeda, usa formatação de moeda Python
-        # Usa :,.2f para separador de milhares com vírgula (que é ponto no EN-US)
-        # E depois troca para o padrão BR
+        # Para moeda, usa formatação brasileira
         return f"R$ {val_float:,.{decimal_places}f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 

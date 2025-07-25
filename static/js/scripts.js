@@ -427,3 +427,48 @@ document.addEventListener('DOMContentLoaded', () => {
         exportButton.addEventListener('click', exportarCSV);
     }
 });
+
+// ===========================================
+
+// Script para adicionar animações e interatividade às taxas
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar animação de fade-in aos cards quando entram na tela
+    const cards = document.querySelectorAll('.taxas-indicadores-section .card');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
+    });
+
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+
+    // Adicionar efeito de "pulse" nos valores quando a página carrega
+    setTimeout(() => {
+        const values = document.querySelectorAll('.taxas-indicadores-section .card-value');
+        values.forEach(value => {
+            value.style.animation = 'pulse 0.5s ease-in-out';
+        });
+    }, 1000);
+});
+
+// Animação CSS para o pulse
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+`;
+document.head.appendChild(style);

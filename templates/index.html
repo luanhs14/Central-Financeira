@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Início{% endblock %}
+
 {% block content %}
 <div class="container main-page-content modern-home">
 
@@ -26,19 +28,83 @@
         </div>
     </div>
 
-    <section class="current-rates-section">
+
+    <section class="taxas-indicadores-section">
         <h2>Taxas e Indicadores Atuais</h2>
-        <div class="rates-list">
-            <div class="rate-item"><span>SELIC:</span> <span class="rate-value">{{ rates.selic | currency_br }}</span></div>
-            <div class="rate-item"><span>CDI:</span> <span class="rate-value">{{ rates.cdi | currency_br }}</span></div>
-            <div class="rate-item"><span>IPCA:</span> <span class="rate-value">{{ rates.ipca | currency_br }}</span></div>
-            <div class="rate-item"><span>Poupança:</span> <span class="rate-value">{{ rates.poupanca | currency_br }}</span></div>
-            <div class="rate-item"><span>Ibovespa:</span> <span class="rate-value">{{ rates.ibovespa | currency_br }}</span></div>
-            <div class="rate-item"><span>S&amp;P 500:</span> <span class="rate-value">{{ rates.sp500 | currency_br }}</span></div>
-            <div class="rate-item"><span>IFIX:</span> <span class="rate-value">{{ rates.ifix | currency_br }}</span></div>
-            <div class="rate-item"><span>Dólar:</span> <span class="rate-value">{{ rates.dolar | currency_br }}</span></div>
-            <div class="rate-item"><span>Bitcoin:</span> <span class="rate-value">{{ rates.bitcoin | currency_br }}</span></div>
-            <div class="rate-item"><span>INPC:</span> <span class="rate-value">{{ rates.inpc | currency_br }}</span></div>
+        
+        <div class="section">
+            <h3>📈 Indicadores Percentuais</h3>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">SELIC</div>
+                    <div class="card-value percentage">{{ rates.selic | currency_br(true) }}</div>
+                    <div class="card-label">Taxa Básica de Juros</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">CDI</div>
+                    <div class="card-value percentage">{{ rates.cdi | currency_br(true) }}</div>
+                    <div class="card-label">Certificado de Depósito Interbancário</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">IPCA</div>
+                    <div class="card-value percentage">{{ rates.ipca | currency_br(true) }}</div>
+                    <div class="card-label">Índice de Preços ao Consumidor Amplo</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">IFIX</div>
+                    <div class="card-value percentage">{{ rates.ifix | currency_br(true) }}</div>
+                    <div class="card-label">Índice de Fundos Imobiliários</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Poupança</div>
+                    <div class="card-value percentage">{{ rates.poupanca | currency_br(true) }}</div>
+                    <div class="card-label">Rendimento Anual</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">INPC</div>
+                    <div class="card-value percentage">{{ rates.inpc | currency_br(true) }}</div>
+                    <div class="card-label">Índice Nacional de Preços ao Consumidor</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>💰 Valores Monetários</h3>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">Dólar</div>
+                    <div class="card-value currency">{{ rates.dolar | currency_br }}</div>
+                    <div class="card-label">Cotação USD/BRL</div>
+                </div>
+                
+                <div class="card highlight">
+                    <div class="card-header">Ibovespa</div>
+                    <div class="card-value currency">{{ rates.ibovespa | currency_br(false, 0) }}</div>
+                    <div class="card-label">Índice Bovespa</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">S&P 500</div>
+                    <div class="card-value currency">{{ rates.sp500 | currency_br(false, 0) }}</div>
+                    <div class="card-label">Índice Standard & Poor's 500</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>₿ Criptomoedas</h3>
+            <div class="grid">
+                <div class="card highlight">
+                    <div class="card-header">Bitcoin</div>
+                    <div class="card-value currency">{{ rates.bitcoin | currency_br(false, 0) }}</div>
+                    <div class="card-label">Cotação BTC/BRL</div>
+                </div>
+            </div>
         </div>
     </section>
 </div>

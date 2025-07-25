@@ -1026,3 +1026,125 @@ body {
         font-size: 1.8rem;
     }
 }
+
+/* Seção de Taxas e Indicadores */
+.taxas-indicadores-section {
+    margin-top: 50px;
+    padding: 30px 0;
+}
+
+.taxas-indicadores-section h2 {
+    text-align: center;
+    color: var(--primary-dark-color);
+    margin-bottom: 40px;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.taxas-indicadores-section .section {
+    margin-bottom: 40px;
+}
+
+.taxas-indicadores-section .section h3 {
+    color: var(--text-dark);
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.taxas-indicadores-section .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.taxas-indicadores-section .card {
+    background: linear-gradient(145deg, #ffffff, #f7fafc);
+    border-radius: var(--radius-large);
+    padding: 25px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.taxas-indicadores-section .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), #764ba2);
+}
+
+.taxas-indicadores-section .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.taxas-indicadores-section .card-header {
+    font-weight: 600;
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.taxas-indicadores-section .card-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.taxas-indicadores-section .percentage {
+    color: var(--primary-color);
+}
+
+.taxas-indicadores-section .currency {
+    color: #48bb78;
+}
+
+.taxas-indicadores-section .card-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.taxas-indicadores-section .highlight {
+    background: linear-gradient(145deg, #f0fff4, #e6fffa);
+    border-color: #48bb78;
+}
+
+.taxas-indicadores-section .highlight::before {
+    background: linear-gradient(90deg, #48bb78, #38a169);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .taxas-indicadores-section .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .taxas-indicadores-section h2 {
+        font-size: 2rem;
+    }
+
+    .taxas-indicadores-section .section h3 {
+        font-size: 1.3rem;
+    }
+
+    .taxas-indicadores-section .card {
+        padding: 20px;
+    }
+
+    .taxas-indicadores-section .card-value {
+        font-size: 1.5rem;
+    }
+}
