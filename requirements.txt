@@ -1,0 +1,7 @@
+Flask
+requests
+python-dateutil
+Flask-APScheduler
+gunicorn
+Flask-SQLAlchemy
+matplotlib

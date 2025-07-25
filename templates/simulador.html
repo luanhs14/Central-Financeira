@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Simulador de Rendimentos{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2 style="margin-top: 0; color: #4a5568;">Simulador de Rendimentos</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="valor">Valor inicial:</label>
+                <input type="text" id="valor" name="valor" required placeholder="Ex: 1000,00" value="{{ request.form.valor }}">
+            </div>
+            <div class="form-group">
+                <label for="periodo">Período (em meses):</label>
+                <input type="number" id="periodo" name="periodo" required placeholder="Ex: 12" value="{{ request.form.periodo }}">
+            </div>
+            <div class="form-group">
+                <label for="tipo_rendimento">Tipo de rendimento:</label>
+                <select id="tipo_rendimento" name="tipo_rendimento">
+                    <option value="selic" {% if request.form.tipo_rendimento == 'selic' %}selected{% endif %}>SELIC</option>
+                    <option value="cdi" {% if request.form.tipo_rendimento == 'cdi' %}selected{% endif %}>CDI</option>
+                    <option value="ipca" {% if request.form.tipo_rendimento == 'ipca' %}selected{% endif %}>IPCA</option>
+                    <option value="poupanca" {% if request.form.tipo_rendimento == 'poupanca' %}selected{% endif %}>Poupança</option>
+                    <option value="ibovespa" {% if request.form.tipo_rendimento == 'ibovespa' %}selected{% endif %}>Ibovespa</option>
+                    <option value="ifix" {% if request.form.tipo_rendimento == 'ifix' %}selected{% endif %}>IFIX</option>
+                    <option value="inpc" {% if request.form.tipo_rendimento == 'inpc' %}selected{% endif %}>INPC</option>
+                    <option value="outro" {% if request.form.tipo_rendimento == 'outro' %}selected{% endif %}>Outros</option>
+                </select>
+            </div>
+            <div class="form-group" id="rendimento_personalizado_group" style="display: {% if request.form.tipo_rendimento == 'outro' %}block{% else %}none{% endif %};">
+                <label for="rendimento_personalizado">Taxa personalizada (% ao ano):</label>
+                <input type="text" id="rendimento_personalizado" name="rendimento_personalizado" placeholder="Ex: 10,5" value="{{ request.form.rendimento_personalizado }}">
+            </div>
+            <button type="submit" class="btn">Simular</button>
+        </form>
+    </div>
+
+    {% if resultado %}
+        <div class="resultado-formatado">
+            <h3>📊 Detalhes da Simulação</h3>
+            <p><strong>💰 Valor Inicial:</strong> R$ {{ "%.2f"|format(resultado.valor_inicial|default(0)|float)|replace('.', ',') }}</p>
+            <p><strong>📅 Período:</strong> {{ resultado.periodo }} meses (~{{ resultado.periodo_dias_uteis }} dias úteis)</p>
+            <p><strong>📈 Rendimento no Período:</strong> R$ {{ "%.2f"|format(resultado.rendimento_total|default(0)|float)|replace('.', ',') }}</p>
+            <p><strong>💼 Valor Final:</strong> R$ {{ "%.2f"|format(resultado.valor_final|default(0)|float)|replace('.', ',') }}</p>
+            <p><strong>📆 Rendimentos:</strong></p>
+            <ul style="list-style: none; padding-left: 1em;">
+                <li>🕒 <strong>Diário:</strong> R$ {{ "%.2f"|format(resultado.rendimento_diario|default(0)|float)|replace('.', ',') }}</li>
+                <li>📆 <strong>Mensal:</strong> R$ {{ "%.2f"|format(resultado.rendimento_mensal|default(0)|float)|replace('.', ',') }}</li>
+                {% if resultado.rendimento_x_meses is defined and resultado.rendimento_x_meses %}
+                <li>🗓️ <strong>{{ resultado.periodo }} meses:</strong> R$ {{ "%.2f"|format(resultado.rendimento_x_meses|float)|replace('.', ',') }}</li>
+                {% endif %}
+                <li>📈 <strong>Anual:</strong> R$ {{ "%.2f"|format(resultado.rendimento_anual|default(0)|float)|replace('.', ',') }}</li>
+            </ul>
+        </div>
+    {% elif erro %}
+        <div class="resultado-container" style="border-left-color: #ef4444;">
+            <h3>Erro</h3>
+            <p>{{ erro }}</p>
+        </div>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('tipo_rendimento');
+            const campoPersonalizado = document.getElementById('rendimento_personalizado_group');
+            function toggleCampoPersonalizado() {
+                campoPersonalizado.style.display = select.value === 'outro' ? 'block' : 'none';
+            }
+            select.addEventListener('change', toggleCampoPersonalizado);
+            toggleCampoPersonalizado();
+        });
+    </script>
+{% endblock %}

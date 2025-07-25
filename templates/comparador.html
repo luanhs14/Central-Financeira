@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Comparador Financeiro</h1>
+    <p class="subtitulo">Descubra se é melhor investir mensalmente ou amortizar sua dívida.</p>
+    
+    <section class="form-section">
+    <form id="comparador-form">
+        <div class="form-group">
+            <label for="valor-disponivel-mensal">Valor disponível por mês (R$):</label>
+            <input type="text" id="valor-disponivel-mensal" name="valor_disponivel_mensal" required placeholder="Ex: 790,00">
+        </div>
+        
+        <div class="form-group">
+            <label for="num-parcelas-restantes">Número total de parcelas restantes (meses):</label>
+            <input type="number" id="num-parcelas-restantes" name="num_parcelas_restantes" min="1" required placeholder="Ex: 24">
+        </div>
+        
+        <div class="form-group">
+            <label for="taxa-rendimento-mensal">Taxa de rendimento mensal do investimento (% a.m.):</label>
+            <input type="text" id="taxa-rendimento-mensal" name="taxa_rendimento_mensal" required placeholder="Ex: 1,00">
+        </div>
+
+        <div class="form-group">
+            <label for="taxa-juros-financiamento-mensal">Taxa de juros mensal do financiamento (% a.m.):</label>
+            <input type="text" id="taxa-juros-financiamento-mensal" name="taxa_juros_financiamento_mensal" required placeholder="Ex: 0,80">
+        </div>
+
+        <div class="form-group">
+            <label for="valor-total-divida-atual">Valor total da dívida atual (R$):</label>
+            <input type="text" id="valor-total-divida-atual" name="valor_total_divida_atual" placeholder="Opcional para cálculo atual, mas útil para simulações futuras.">
+        </div>
+        
+        <button type="button" class="btn btn-primary" onclick="calcularComparacao()">Comparar</button>
+    </form>
+    </section>
+    
+    <section class="resultados-section">
+        <h2>Resultados:</h2>
+        <h3>Resultados após <span id="periodo-resultado">-</span> meses:</h3>
+        
+        <div class="comparison-cards-wrapper">
+            <div class="comparison-card">
+                <h3><strong>Cenário 1: Investir</strong> os R$ <span class="destaque" id="valor-mensal-investir">-</span> por mês</h3>
+                <p>Montante acumulado ao final: <span class="destaque" id="montante-investido">-</span></p>
+            </div>
+            
+            <div class="comparison-card">
+                <h3><strong>Cenário 2: Amortizar</strong> R$ <span class="destaque" id="valor-mensal-amortizar">-</span> por mês</h3>
+                <p>Economia estimada em juros: <span class="destaque" id="economia-amortizar">-</span></p>
+            </div>
+        </div>
+        
+        <div class="recommendation-summary">
+            <h3>Nossa Recomendação é:</h3>
+            <p id="recomendacao-principal" class="highlight-recommendation destaque">-</p>
+            <p id="recomendacao-diferenca" class="recommendation-difference"></p>
+        </div>
+
+        <button type="button" class="btn btn-toggle" onclick="toggleMonthlyTable()">Ver tabela mês a mês</button>
+
+        <div id="monthly-breakdown" style="display: none; margin-top: 20px;">
+            <h3>Evolução Mês a Mês:</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Mês</th>
+                        <th>Investimento Acumulado (R$)</th>
+                        <th>Economia Amortização Acumulada (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="monthly-table-body">
+                    <!-- Tabela será preenchida dinamicamente -->
+                </tbody>
+            </table>
+            <p class="observacao">Valores aproximados, calculados com base nas taxas fornecidas.</p>
+        </div>
+    </section>
+</div>
+
+<script>
+    function formatCurrencyBr(value) {
+        if (value === null || value === undefined || isNaN(value)) {
+            return 'R$ -';
+        }
+        const numericValue = parseFloat(value); 
+        return 'R$ ' + numericValue.toLocaleString('pt-BR', { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+        });
+    }
+
+    function parseBrazilianNumber(numberStr) {
+        return parseFloat(numberStr.replace(/\./g, '').replace(',', '.'));
+    }
+
+    async function calcularComparacao() {
+        // Obter valores dos inputs
+        const valorDisponivelMensal = parseBrazilianNumber(document.getElementById('valor-disponivel-mensal').value);
+        const numParcelasRestantes = parseInt(document.getElementById('num-parcelas-restantes').value);
+        const taxaRendimentoMensal = parseBrazilianNumber(document.getElementById('taxa-rendimento-mensal').value) / 100;
+        const taxaJurosFinanciamentoMensal = parseBrazilianNumber(document.getElementById('taxa-juros-financiamento-mensal').value) / 100;
+        const valorTotalDividaAtual = document.getElementById('valor-total-divida-atual').value ? 
+            parseBrazilianNumber(document.getElementById('valor-total-divida-atual').value) : 0;
+
+        // Atualizar exibição dos valores básicos (sempre mostra o valor digitado)
+        document.getElementById('periodo-resultado').textContent = numParcelasRestantes || '-';
+        document.getElementById('valor-mensal-investir').textContent = document.getElementById('valor-disponivel-mensal').value || '-';
+        document.getElementById('valor-mensal-amortizar').textContent = document.getElementById('valor-disponivel-mensal').value || '-';
+
+        try {
+            const response = await fetch('/comparador', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    valor_disponivel_mensal: valorDisponivelMensal.toString().replace('.', ','),
+                    num_parcelas_restantes: numParcelasRestantes,
+                    taxa_rendimento_mensal: (taxaRendimentoMensal * 100).toString().replace('.', ','),
+                    taxa_juros_financiamento_mensal: (taxaJurosFinanciamentoMensal * 100).toString().replace('.', ','),
+                    valor_total_divida_atual: valorTotalDividaAtual.toString().replace('.', ',')
+                })
+            });
+
+            let data = null;
+            try {
+                data = await response.json();
+            } catch (e) {
+                alert('Erro ao processar resposta do servidor.');
+                document.body.classList.remove('loading');
+                return;
+            }
+
+            if (response.ok && data) {
+                // Atualiza todos os campos corretamente após o cálculo
+                document.getElementById('periodo-resultado').textContent = numParcelasRestantes;
+                document.getElementById('valor-mensal-investir').textContent = document.getElementById('valor-disponivel-mensal').value || '-';
+                document.getElementById('valor-mensal-amortizar').textContent = document.getElementById('valor-disponivel-mensal').value || '-';
+                document.getElementById('montante-investido').textContent = formatCurrencyBr(data.montante_investido);
+                document.getElementById('economia-amortizar').textContent = formatCurrencyBr(data.economia_juros_amortizacao);
+
+                let recomendacaoPrincipal = "";
+                let recomendacaoDiferenca = "";
+
+                if (data.recomendacao === "INVESTIR") {
+                    recomendacaoPrincipal = "INVESTIR";
+                    recomendacaoDiferenca = `Você teria ${formatCurrencyBr(data.diferenca)} a mais ao final se optar por investir.`;
+                    document.getElementById('recomendacao-principal').className = 'highlight-recommendation invest-bg destaque';
+                } else if (data.recomendacao === "AMORTIZAR") {
+                    recomendacaoPrincipal = "AMORTIZAR";
+                    recomendacaoDiferenca = `Você teria ${formatCurrencyBr(data.diferenca)} a mais ao final se optar por amortizar.`;
+                    document.getElementById('recomendacao-principal').className = 'highlight-recommendation amortizar-bg destaque';
+                } else {
+                    recomendacaoPrincipal = "INDIFERENTE";
+                    recomendacaoDiferenca = `Ambas as opções resultam em valores muito próximos.`;
+                    document.getElementById('recomendacao-principal').className = 'highlight-recommendation neutral-bg destaque';
+                }
+
+                document.getElementById('recomendacao-principal').textContent = recomendacaoPrincipal;
+                document.getElementById('recomendacao-diferenca').textContent = recomendacaoDiferenca;
+
+                // Popula a tabela de detalhamento mensal
+                const monthlyTableBody = document.getElementById('monthly-table-body');
+                monthlyTableBody.innerHTML = '';
+
+                if (data.monthly_breakdown_investimento && data.monthly_breakdown_amortizacao) {
+                    data.monthly_breakdown_investimento.forEach((item, index) => {
+                        const row = monthlyTableBody.insertRow();
+                        const monthCell = row.insertCell();
+                        const investCell = row.insertCell();
+                        const amortCell = row.insertCell();
+
+                        monthCell.textContent = item.mes;
+                        investCell.textContent = formatCurrencyBr(item.valor_acumulado);
+                        amortCell.textContent = formatCurrencyBr(
+                            data.monthly_breakdown_amortizacao[index]?.economia_acumulada_equivalente || 0
+                        );
+                    });
+                }
+            } else {
+                alert('Erro ao calcular comparação: ' + (data && data.erro ? data.erro : 'Erro desconhecido'));
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao calcular. Verifique os valores inseridos.');
+        }
+    }
+
+    function toggleMonthlyTable() {
+        const tableDiv = document.getElementById('monthly-breakdown');
+        tableDiv.style.display = tableDiv.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+<style>
+    /* (Manter os estilos CSS existentes) */
+    .comparison-cards-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .comparison-card {
+        flex: 1 1 300px;
+        background-color: #f7fafc;
+        padding: 24px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .comparison-card h3 {
+        color: #2563eb;
+        font-size: 1.25em;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+    .comparison-card .destaque {
+        color: #2563eb;
+        font-weight: 700;
+    }
+    .recommendation-summary {
+        background-color: #e0f2fe;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+    .highlight-recommendation {
+        font-size: 1.5em;
+        font-weight: 700;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .btn-toggle {
+        background-color: #2563eb;
+        color: white;
+        margin-top: 15px;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 1em;
+        transition: background-color 0.3s;
+    }
+    .btn-toggle:hover {
+        background-color: #1d4ed8;
+    }
+    .observacao {
+        font-size: 0.95em;
+        color: #666;
+        margin-top: 10px;
+        font-style: italic;
+    }
+    @media (max-width: 768px) {
+        .comparison-cards-wrapper {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,1028 @@
+/* static/css/style.css */
+
+/* --- Variáveis CSS para Cores e Fontes (melhora a manutenção) --- */
+:root {
+    --primary-color: #3b82f6; /* Azul vibrante */
+    --primary-dark-color: #2563eb; /* Azul mais escuro para hover */
+    --secondary-color: #6b7280; /* Cinza médio */
+    --secondary-dark-color: #4b5563; /* Cinza mais escuro */
+    --background-light: #f8f9fa; /* Fundo muito claro */
+    --background-medium: #f0f2f5; /* Fundo padrão */
+    --text-dark: #2d3748; /* Texto principal escuro */
+    --text-medium: #4a5568; /* Texto secundário */
+    --text-light: #6b7280; /* Texto de apoio */
+    --border-color: #e0e0e0;
+    --card-bg: #ffffff;
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra mais pronunciada para cards */
+    --radius-small: 4px;
+    --radius-medium: 8px;
+    --radius-large: 12px;
+    /* Adiciona uma variável para a cor primária em RGB para uso em RGBA() */
+    --primary-color-rgb: 59, 130, 246;
+}
+
+/* --- Estilos Gerais --- */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; /* Fonte mais moderna */
+    background-color: var(--background-medium);
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.65; /* Ligeiramente mais espaçado */
+    -webkit-font-smoothing: antialiased; /* Suavização de fonte */
+    -moz-osx-font-smoothing: grayscale; /* Suavização de fonte */
+    scroll-behavior: smooth; /* Rolagem suave */
+}
+
+.container {
+    max-width: 1280px; /* Um pouco mais largo para desktop */
+    margin: 0 auto;
+    padding: 25px; /* Padding um pouco maior */
+}
+
+/* --- Navbar (cabeçalho) --- */
+.navbar {
+    background-color: var(--card-bg);
+    padding: 18px 25px; /* Mais padding */
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-light);
+    position: sticky; /* Sticky navbar */
+    top: 0;
+    z-index: 100;
+}
+
+.navbar h1 {
+    margin: 0;
+    font-size: 26px; /* Aumenta um pouco */
+    color: var(--primary-dark-color); /* Título com a cor primária */
+    font-weight: 700; /* Mais negrito */
+}
+
+.navbar .nav-links a {
+    color: var(--text-medium);
+    text-decoration: none;
+    margin-left: 25px; /* Mais espaçamento */
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease; /* Transição mais suave e um pequeno scale */
+    position: relative; /* Para o underline animado */
+    padding-bottom: 3px; /* Espaço para o underline */
+}
+
+.navbar .nav-links a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease-in-out;
+}
+
+.navbar .nav-links a:hover {
+    color: var(--primary-color);
+    transform: translateY(-2px); /* Efeito sutil de levantar */
+}
+
+.navbar .nav-links a:hover::after {
+    width: 100%;
+}
+
+/* --- Botões Gerais --- */
+.btn {
+    display: inline-flex; /* Para alinhar ícones se houver */
+    align-items: center;
+    justify-content: center;
+    padding: 12px 25px; /* Mais padding */
+    background-color: var(--primary-color);
+    color: var(--card-bg);
+    border: none;
+    border-radius: var(--radius-small);
+    font-size: 16px;
+    font-weight: 600; /* Um pouco mais negrito */
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    background-color: var(--primary-dark-color);
+    transform: translateY(-2px); /* Efeito sutil de levantar */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-dark-color);
+}
+
+/* --- Cartões (cards) - Estilo para cards genéricos, pode ser usado em outras páginas --- */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Min-width um pouco maior */
+    gap: 25px; /* Mais espaçamento */
+    margin-top: 30px;
+}
+
+.card-item {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-medium); /* Cantos mais arredondados */
+    box-shadow: var(--shadow-medium); /* Sombra mais forte */
+    padding: 25px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efeito hover */
+}
+
+.card-item:hover {
+    transform: translateY(-5px); /* Levanta mais no hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* Sombra mais intensa no hover */
+}
+
+.card-item h2 {
+    color: var(--text-medium);
+    font-size: 22px; /* Aumenta um pouco */
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.card-item p {
+    color: var(--text-light);
+    font-size: 16px; /* Aumenta um pouco */
+    line-height: 1.6;
+    flex-grow: 1;
+    margin-bottom: 25px;
+}
+
+.card-item .btn {
+    margin-top: auto;
+}
+
+/* --- Seção de Taxas Atuais (na Home) --- */
+.current-rates-section {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-large); /* Mais arredondado */
+    box-shadow: var(--shadow-medium);
+    padding: 35px; /* Mais padding */
+    margin-top: 50px; /* Mais espaçamento do topo */
+}
+
+.current-rates-section h2 {
+    color: var(--primary-dark-color);
+    font-size: 24px; /* Maior */
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.rate-category {
+    margin-bottom: 30px;
+}
+
+.rate-category h3 {
+    color: var(--primary-color);
+    font-size: 19px; /* Um pouco maior */
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+
+.rates-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajuste de largura */
+    gap: 18px; /* Mais espaçamento */
+}
+
+.rate-item {
+    background-color: var(--background-light);
+    padding: 14px 18px; /* Mais padding */
+    border-radius: var(--radius-small);
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.rate-item:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(var(--primary-color-rgb), 0.05); /* Um toque da cor primária no hover */
+}
+
+.rate-item span:first-child {
+    font-weight: 500;
+    color: var(--text-medium);
+}
+
+.rate-item .rate-value {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* --- Formulários --- */
+.form-container {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px; /* Mais espaçamento */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px; /* Mais espaçamento */
+    font-weight: 600;
+    color: var(--text-medium);
+    font-size: 15px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px; /* Mais padding */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-small);
+    box-sizing: border-box;
+    font-size: 16px;
+    color: var(--text-dark);
+    background-color: var(--background-light); /* Fundo claro para inputs */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Sombra de foco */
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    transform: scale(1.1); /* Aumenta o checkbox */
+}
+
+/* --- Estilos para o Simulador / Resultados --- */
+.resultado-container {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    padding: 30px;
+    margin-top: 40px; /* Mais espaçamento */
+    border-left: 6px solid var(--primary-color); /* Borda mais grossa */
+}
+
+.resultado-container h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.resultado-container p {
+    font-size: 17px;
+    margin-bottom: 12px;
+    color: var(--text-medium);
+}
+
+.resultado-container p:last-child {
+    margin-bottom: 0;
+}
+
+.resultado-formatado {
+    background-color: var(--background-light);
+    border-left: 6px solid var(--primary-color);
+    border-radius: var(--radius-medium);
+    padding: 30px 35px;
+    margin-top: 40px;
+    box-shadow: var(--shadow-light);
+    font-size: 18px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.resultado-formatado h4 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.resultado-formatado ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.resultado-formatado li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.resultado-formatado li::before {
+    content: "✅"; /* Adiciona um ícone visual */
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+/* --- Estilos para o Comparador --- */
+.comparison-card {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    padding: 25px;
+    text-align: center;
+    margin-top: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.comparison-card h3 {
+    color: var(--primary-color);
+    font-size: 22px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.comparison-card p {
+    font-size: 17px;
+    color: var(--text-medium);
+    margin-bottom: 10px;
+}
+
+.recommendation {
+    background-color: #e6f7ed; /* Verde claro para sucesso/recomendação */
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    padding: 25px;
+    text-align: center;
+    margin-top: 40px;
+    border-left: 6px solid #28a745; /* Borda verde mais forte */
+}
+
+.recommendation h3 {
+    color: #28a745; /* Verde para a recomendação */
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.recommendation p {
+    font-size: 19px;
+    color: var(--text-dark);
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.recommendation span {
+    font-weight: 700;
+    color: var(--primary-dark-color); /* Destaca o valor */
+}
+
+/* --- Estilos para Gráfico (Chart.js) --- */
+.chart-container {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    padding: 25px;
+    margin-top: 40px;
+    position: relative;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-container canvas {
+    max-height: 100%;
+    width: 100% !important; /* Override para Chart.js */
+    height: 100% !important; /* Override para Chart.js */
+}
+
+
+/* --- Estilos para Filtros de Histórico --- */
+.page-title { /* Estilos da página de Histórico */
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--primary-dark-color);
+    font-weight: 700;
+}
+
+.filter-section {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    padding: 25px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px; /* Mais espaçamento entre filtros */
+    align-items: flex-end;
+}
+
+.filter-section h3 {
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--text-medium);
+    font-size: 20px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.filter-section .form-group {
+    flex: 1;
+    min-width: 220px; /* Largura mínima um pouco maior */
+    margin-bottom: 0;
+}
+
+.filter-section .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Mais espaçamento entre checkboxes */
+    margin-top: 10px;
+}
+
+.filter-section .checkbox-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    font-weight: normal;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.filter-section .checkbox-group label:hover {
+    color: var(--primary-color);
+}
+
+.filter-section .checkbox-group input[type="checkbox"] {
+    margin-right: 8px;
+    width: auto;
+    cursor: pointer;
+}
+
+.filter-section .btn {
+    margin-top: 0;
+    width: auto;
+    padding: 12px 30px; /* Mais padding no botão de filtro */
+    align-self: flex-end;
+}
+
+/* --- Estilos para a Tabela Histórica (reforçados e combinados com styled-table) --- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: var(--shadow-medium);
+    border-radius: var(--radius-medium);
+    background-color: var(--card-bg); /* Fundo para a tabela responsiva */
+    margin-top: 40px; /* Adicionado espaço */
+}
+
+.historico-table {
+    /* Já herda de .styled-table */
+    min-width: 950px; /* Largura mínima para garantir rolagem */
+}
+
+/* Remove estilos redundantes que já estão em .styled-table */
+/*
+.historico-table th,
+.historico-table td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+    color: var(--text-dark);
+}
+*/
+
+.historico-table thead th {
+    background-color: var(--primary-color); /* Fundo do cabeçalho */
+    color: var(--card-bg);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil no cabeçalho fixo */
+}
+
+/* Remove estilos redundantes que já estão em .styled-table */
+/*
+.historico-table tbody tr:nth-of-type(even) {
+    background-color: var(--background-light);
+}
+
+.historico-table tbody tr:hover {
+    background-color: rgba(var(--primary-color-rgb), 0.05);
+}
+*/
+
+.table-responsive::before {
+    content: ' deslize para o lado para ver mais'; /* Ajusta o texto e remove o emoji duplicado no HTML */
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    text-align: center; /* Centraliza o texto */
+}
+
+
+/* --- Novos estilos para responsividade do navbar --- */
+.hamburger-menu {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 30px; /* Maior para melhor toque */
+    cursor: pointer;
+    color: var(--text-medium);
+    padding: 0;
+    outline: none; /* Remove outline ao clicar */
+}
+
+@media (max-width: 992px) { /* Ponto de quebra para tablets/celulares */
+    .container {
+        padding: 15px;
+    }
+
+    .navbar {
+        flex-wrap: wrap;
+        padding: 15px 20px;
+    }
+
+    .navbar h1 {
+        font-size: 22px;
+    }
+
+    .hamburger-menu {
+        display: block;
+    }
+
+    .navbar .nav-links {
+        display: none;
+        flex-direction: column;
+        width: calc(100% + 50px); /* Para cobrir margens do container */
+        background-color: var(--card-bg);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 60px; /* Ajusta conforme altura da navbar */
+        left: -25px; /* Alinha com o container */
+        z-index: 99;
+        padding: 20px 0;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+        animation: slideDown 0.3s ease-out forwards; /* Animação ao abrir */
+    }
+
+    .navbar .nav-links.active {
+        display: flex;
+    }
+
+    .navbar .nav-links a {
+        margin: 12px 0;
+        padding: 12px;
+        display: block;
+        font-size: 18px; /* Maior para mobile */
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Ajustes para layouts de coluna em mobile */
+    .card-container,
+    .homepage-feature-section,
+    .rates-list,
+    .filter-section {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+        gap: 20px;
+    }
+
+    .homepage-hero {
+        padding: 40px 15px;
+        border-radius: var(--radius-medium);
+    }
+
+    .homepage-hero h1 {
+        font-size: 30px;
+    }
+
+    .homepage-hero p {
+        font-size: 16px;
+    }
+
+    .homepage-actions {
+        flex-direction: column;
+    }
+
+    .current-rates-section {
+        padding: 25px;
+        margin-top: 30px;
+    }
+
+    .current-rates-section h2 {
+        font-size: 20px;
+    }
+
+    .rate-category h3 {
+        font-size: 17px;
+    }
+
+    .form-container,
+    .resultado-container,
+    .recommendation,
+    .chart-container, /* Altera para chart-container */
+    .comparison-card {
+        padding: 25px;
+        margin-top: 30px;
+    }
+
+    .styled-table,
+    .historico-table {
+        min-width: unset; /* Remove min-width em mobile, a rolagem horizontal já resolve */
+    }
+
+    .historico-table thead th {
+        font-size: 14px; /* Fonte menor no cabeçalho da tabela */
+    }
+
+    .historico-table td {
+        font-size: 14px; /* Fonte menor nos dados da tabela */
+    }
+
+    .page-title { /* Estilos da página de Histórico */
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .table-responsive::before {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) { /* Ajustes finos para celulares pequenos */
+    .container {
+        padding: 10px;
+    }
+
+    .navbar {
+        padding: 10px 15px;
+    }
+
+    .navbar h1 {
+        font-size: 20px;
+    }
+
+    .hamburger-menu {
+        font-size: 26px;
+    }
+
+    .homepage-hero {
+        padding: 30px 10px;
+    }
+
+    .homepage-hero h1 {
+        font-size: 26px;
+    }
+
+    .homepage-actions a {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .card-item,
+    .form-container,
+    .resultado-container,
+    .recommendation,
+    .chart-container, /* Altera para chart-container */
+    .comparison-card {
+        padding: 20px;
+    }
+
+    .card-item h2,
+    .resultado-container h3,
+    .recommendation h3 {
+        font-size: 20px;
+    }
+
+    .card-item p,
+    .resultado-container p,
+    .recommendation p {
+        font-size: 15px;
+    }
+
+    .filter-section .form-group {
+        min-width: 100%; /* Ocupa a largura total em telas muito pequenas */
+    }
+
+    .filter-section .btn {
+        width: 100%;
+    }
+
+    .page-title { /* Estilos da página de Histórico */
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+
+/* Página inicial - estilo reformulado */
+.homepage-hero {
+    background: linear-gradient(to right, var(--primary-color), var(--primary-dark-color)); /* Gradiente moderno */
+    color: var(--card-bg); /* Texto branco */
+    padding: 70px 30px; /* Mais padding */
+    text-align: center;
+    border-radius: var(--radius-large); /* Cantos mais arredondados */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Sombra mais intensa */
+    margin-bottom: 50px; /* Mais espaço */
+}
+.homepage-hero h1 {
+    font-size: 44px; /* Maior e mais impactante */
+    margin-bottom: 20px;
+    font-weight: 800; /* Mais negrito */
+    letter-spacing: -1px; /* Ajuste para melhor leitura */
+}
+.homepage-hero p {
+    font-size: 20px; /* Maior */
+    max-width: 800px; /* Maior largura para o texto */
+    margin: 0 auto 30px auto; /* Espaçamento do botão */
+    line-height: 1.7; /* Melhor leitura */
+}
+
+.homepage-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px; /* Mais espaçamento */
+    margin-top: 30px;
+}
+.homepage-actions a {
+    padding: 15px 35px; /* Mais padding */
+    background-color: var(--card-bg);
+    color: var(--primary-dark-color);
+    border-radius: 8px; /* Mais arredondado */
+    font-size: 17px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.homepage-actions a:hover {
+    background-color: #e0eaff; /* Tom de azul muito claro */
+    color: #1d4ed8;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.homepage-feature-section {
+    margin-top: 50px; /* Mais espaçamento */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Min-width maior */
+    gap: 35px; /* Mais espaçamento */
+}
+.homepage-feature {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-large); /* Mais arredondado */
+    padding: 30px; /* Mais padding */
+    box-shadow: var(--shadow-medium);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.homepage-feature:hover {
+    transform: translateY(-7px); /* Levanta mais no hover */
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
+}
+.homepage-feature h3 {
+    color: var(--primary-color);
+    font-size: 24px; /* Maior */
+    margin-bottom: 15px;
+    font-weight: 700;
+    display: flex; /* Para alinhar o emoji */
+    align-items: center;
+    justify-content: center;
+}
+/* Emojis visuais para cada funcionalidade na página inicial */
+.homepage-feature h3::before {
+    font-size: 1.5em; /* Emoji maior */
+    margin-right: 10px;
+    line-height: 1; /* Alinhamento vertical */
+}
+.homepage-feature.simulador h3::before { content: "📈"; }
+.homepage-feature.comparador h3::before { content: "⚖️"; }
+.homepage-feature.historico h3::before { content: "📊"; }
+.homepage-feature p {
+    color: var(--text-light);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* --- Estilos para Filtros de Histórico --- */
+.page-title { /* Estilos da página de Histórico */
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--primary-dark-color);
+    font-weight: 700;
+}
+
+.filter-section {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    padding: 25px;
+    margin-bottom: 30px;
+    display: flex; /* Garante que os itens de filtro fiquem em linha */
+    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
+    gap: 25px; /* Mais espaçamento entre filtros */
+    align-items: flex-end; /* Alinha os itens na parte inferior */
+}
+
+.filter-section h3 {
+    width: 100%; /* Garante que o título ocupe a largura total */
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--text-medium);
+    font-size: 20px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.filter-section .form-group {
+    flex: 1; /* Permite que os form-groups se expandam */
+    min-width: 220px; /* Largura mínima para evitar que fiquem muito apertados */
+    margin-bottom: 0; /* Remove margem inferior padrão */
+}
+
+.filter-section .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Mais espaçamento entre checkboxes */
+    margin-top: 10px;
+}
+
+.filter-section .checkbox-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    font-weight: normal;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.filter-section .checkbox-group label:hover {
+    color: var(--primary-color);
+}
+
+.filter-section .checkbox-group input[type="checkbox"] {
+    margin-right: 8px;
+    width: auto;
+    cursor: pointer;
+}
+
+.filter-section .btn {
+    margin-top: 0;
+    width: auto;
+    padding: 12px 30px; /* Mais padding no botão de filtro */
+    align-self: flex-end; /* Alinha o botão na parte inferior do contêiner flex */
+}
+
+/* --- Estilos para a Tabela Histórica --- */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto; /* Permite rolagem horizontal se a tabela for muito larga */
+    -webkit-overflow-scrolling: touch; /* Melhora a rolagem em dispositivos iOS */
+    box-shadow: var(--shadow-medium);
+    border-radius: var(--radius-medium);
+    background-color: var(--card-bg); /* Fundo para a tabela responsiva */
+    margin-top: 40px; /* Adicionado espaço */
+}
+
+.historico-table {
+    width: 100%; /* Ocupa a largura total do contêiner responsivo */
+    border-collapse: collapse; /* Remove espaçamento entre bordas da célula */
+    min-width: 950px; /* Garante uma largura mínima para a tabela, forçando a rolagem */
+}
+
+.historico-table th,
+.historico-table td {
+    padding: 14px 18px;
+    text-align: left; /* Alinhamento à esquerda para melhor leitura */
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap; /* Evita que o texto quebre em várias linhas */
+    color: var(--text-dark);
+}
+
+.historico-table thead th {
+    background-color: var(--primary-color);
+    color: var(--card-bg);
+    font-weight: 600;
+    position: sticky; /* Mantém o cabeçalho fixo na rolagem */
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.historico-table tbody tr:nth-of-type(even) { /* Linhas alternadas para legibilidade */
+    background-color: var(--background-light);
+}
+
+.historico-table tbody tr:hover { /* Efeito de hover nas linhas */
+    background-color: rgba(var(--primary-color-rgb), 0.05);
+}
+
+/* Indicador de rolagem para tabelas */
+.table-responsive::before {
+    content: ' deslize para o lado para ver mais';
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* --- Media Queries (Responsividade) --- */
+@media (max-width: 992px) {
+    /* ... (Mantenha os estilos de responsividade que já sugeri para navbar e homepage) ... */
+
+    .filter-section {
+        flex-direction: column; /* Empilha os filtros verticalmente em telas menores */
+        align-items: stretch; /* Estica os itens para preencher a largura */
+        gap: 20px;
+    }
+
+    .filter-section .form-group {
+        min-width: 100%; /* Ocupa a largura total */
+    }
+
+    .filter-section .btn {
+        width: 100%; /* Botão ocupa a largura total */
+        align-self: auto;
+    }
+
+    .historico-table {
+        min-width: 600px; /* Garante rolagem horizontal, mas não quebra layout em telas pequenas */
+    }
+
+    .historico-table th,
+    .historico-table td {
+        padding: 10px 12px; /* Reduz o padding para economizar espaço */
+        font-size: 14px; /* Fonte um pouco menor */
+    }
+
+    .table-responsive::before {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* ... (Mantenha os estilos de responsividade que já sugeri para navbar e homepage) ... */
+
+    .historico-table th,
+    .historico-table td {
+        padding: 8px 10px; /* Mais redução de padding */
+        font-size: 13px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+}

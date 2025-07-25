@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container main-page-content modern-home">
+
+    <section class="homepage-hero">
+        <h1 class="display-4 fw-bold">🚀 Central Financeira</h1>
+        <p class="lead">Simule, compare e acompanhe os principais indicadores financeiros do Brasil.</p>
+    </section>
+
+    <div class="homepage-feature-section">
+        <div class="homepage-feature simulador">
+            <h3>Simulador</h3>
+            <p>Calcule o rendimento de seus investimentos com base em diferentes taxas e prazos. Entenda o potencial de crescimento do seu dinheiro.</p>
+            <a href="{{ url_for('simulador') }}" class="btn btn-primary">Acessar Simulador</a>
+        </div>
+        <div class="homepage-feature comparador">
+            <h3>Comparador</h3>
+            <p>Decida entre investir um valor disponível ou utilizá-lo para amortizar dívidas. Veja o impacto financeiro de cada escolha ao longo do tempo.</p>
+            <a href="{{ url_for('comparador_investimento') }}" class="btn btn-primary">Acessar Comparador</a>
+        </div>
+        <div class="homepage-feature historico">
+            <h3>Histórico</h3>
+            <p>Acompanhe a evolução de indicadores financeiros importantes como SELIC, CDI, Dólar, Bitcoin e Ibovespa ao longo do tempo.</p>
+            <a href="{{ url_for('historico_page') }}" class="btn btn-primary">Ver Histórico</a>
+        </div>
+    </div>
+
+    <section class="current-rates-section">
+        <h2>Taxas e Indicadores Atuais</h2>
+        <div class="rates-list">
+            <div class="rate-item"><span>SELIC:</span> <span class="rate-value">{{ rates.selic | currency_br }}</span></div>
+            <div class="rate-item"><span>CDI:</span> <span class="rate-value">{{ rates.cdi | currency_br }}</span></div>
+            <div class="rate-item"><span>IPCA:</span> <span class="rate-value">{{ rates.ipca | currency_br }}</span></div>
+            <div class="rate-item"><span>Poupança:</span> <span class="rate-value">{{ rates.poupanca | currency_br }}</span></div>
+            <div class="rate-item"><span>Ibovespa:</span> <span class="rate-value">{{ rates.ibovespa | currency_br }}</span></div>
+            <div class="rate-item"><span>S&amp;P 500:</span> <span class="rate-value">{{ rates.sp500 | currency_br }}</span></div>
+            <div class="rate-item"><span>IFIX:</span> <span class="rate-value">{{ rates.ifix | currency_br }}</span></div>
+            <div class="rate-item"><span>Dólar:</span> <span class="rate-value">{{ rates.dolar | currency_br }}</span></div>
+            <div class="rate-item"><span>Bitcoin:</span> <span class="rate-value">{{ rates.bitcoin | currency_br }}</span></div>
+            <div class="rate-item"><span>INPC:</span> <span class="rate-value">{{ rates.inpc | currency_br }}</span></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
