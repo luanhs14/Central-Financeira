@@ -1,111 +1,821 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Financeira</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* === VARIÁVEIS E RESET === */
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #1e40af;
+            --primary-light: #60a5fa;
+            --secondary-color: #6b7280;
+            --accent-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.2);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
 
-{% block title %}Início{% endblock %}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<div class="container main-page-content modern-home">
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-    <section class="homepage-hero">
-        <h1 class="display-4 fw-bold">🚀 Central Financeira</h1>
-        <p class="lead">Simule, compare e acompanhe os principais indicadores financeiros do Brasil.</p>
-    </section>
+        /* === NAVBAR === */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
 
-    <div class="homepage-feature-section">
-        <div class="homepage-feature simulador">
-            <h3>Simulador</h3>
-            <p>Calcule o rendimento de seus investimentos com base em diferentes taxas e prazos. Entenda o potencial de crescimento do seu dinheiro.</p>
-            <a href="{{ url_for('simulador') }}" class="btn btn-primary">Acessar Simulador</a>
+        .navbar.scrolled {
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .nav-link:hover::before {
+            width: 80%;
+        }
+
+        /* === HERO SECTION === */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* === FEATURES SECTION === */
+        .features {
+            padding: 6rem 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: var(--bg-card-hover);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* === STATS SECTION === */
+        .stats {
+            padding: 6rem 0;
+            background: var(--bg-primary);
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .stats-category {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stats-category:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-items {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .stat-percentage {
+            color: var(--primary-light);
+        }
+
+        .stat-currency {
+            color: var(--accent-color);
+        }
+
+        .stat-points {
+            color: var(--warning-color);
+        }
+
+        /* === FLOATING ELEMENTS === */
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .floating-shape {
+                display: none;
+            }
+        }
+
+        /* === SCROLL ANIMATIONS === */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === LOADING ANIMATION === */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-content">
+            <a href="#" class="navbar-brand">
+                <i class="fas fa-chart-line"></i> Central Financeira
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="#" class="nav-link"><i class="fas fa-home"></i> Início</a></li>
+                <li><a href="#" class="nav-link"><i class="fas fa-calculator"></i> Simulador</a></li>
+                <li><a href="#" class="nav-link"><i class="fas fa-balance-scale"></i> Comparador</a></li>
+                <li><a href="#" class="nav-link"><i class="fas fa-chart-area"></i> Histórico</a></li>
+            </ul>
         </div>
-        <div class="homepage-feature comparador">
-            <h3>Comparador</h3>
-            <p>Decida entre investir um valor disponível ou utilizá-lo para amortizar dívidas. Veja o impacto financeiro de cada escolha ao longo do tempo.</p>
-            <a href="{{ url_for('comparador_investimento') }}" class="btn btn-primary">Acessar Comparador</a>
-        </div>
-        <div class="homepage-feature historico">
-            <h3>Histórico</h3>
-            <p>Acompanhe a evolução de indicadores financeiros importantes como SELIC, CDI, Dólar, Bitcoin e Ibovespa ao longo do tempo.</p>
-            <a href="{{ url_for('historico_page') }}" class="btn btn-primary">Ver Histórico</a>
-        </div>
-    </div>
+    </nav>
 
-
-    <section class="taxas-indicadores-section">
-        <h2>Taxas e Indicadores Atuais</h2>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
         
-        <div class="section">
-            <h3>📈 Indicadores Percentuais</h3>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-header">SELIC</div>
-                    <div class="card-value percentage">{{ rates.selic | currency_br(true) }}</div>
-                    <div class="card-label">Taxa Básica de Juros</div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">CDI</div>
-                    <div class="card-value percentage">{{ rates.cdi | currency_br(true) }}</div>
-                    <div class="card-label">Certificado de Depósito Interbancário</div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">IPCA</div>
-                    <div class="card-value percentage">{{ rates.ipca | currency_br(true) }}</div>
-                    <div class="card-label">Índice de Preços ao Consumidor Amplo</div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">IFIX</div>
-                    <div class="card-value percentage">{{ rates.ifix | currency_br(true) }}</div>
-                    <div class="card-label">Índice de Fundos Imobiliários</div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">Poupança</div>
-                    <div class="card-value percentage">{{ rates.poupanca | currency_br(true) }}</div>
-                    <div class="card-label">Rendimento Anual</div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">INPC</div>
-                    <div class="card-value percentage">{{ rates.inpc | currency_br(true) }}</div>
-                    <div class="card-label">Índice Nacional de Preços ao Consumidor</div>
-                </div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                🚀 Central Financeira
+            </h1>
+            <p class="hero-subtitle">
+                Simule, compare e acompanhe os principais indicadores financeiros do Brasil com ferramentas modernas e intuitivas.
+            </p>
+            <div class="hero-cta">
+                <a href="#features" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    Começar Agora
+                </a>
+                <a href="#stats" class="btn btn-secondary">
+                    <i class="fas fa-chart-line"></i>
+                    Ver Indicadores
+                </a>
             </div>
         </div>
+    </section>
 
-        <div class="section">
-            <h3>💰 Valores Monetários</h3>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-header">Dólar</div>
-                    <div class="card-value currency">{{ rates.dolar | currency_br }}</div>
-                    <div class="card-label">Cotação USD/BRL</div>
-                </div>
-                
-                <div class="card highlight">
-                    <div class="card-header">Ibovespa</div>
-                    <div class="card-value currency">{{ rates.ibovespa | currency_br(false, 0) }}</div>
-                    <div class="card-label">Índice Bovespa</div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">S&P 500</div>
-                    <div class="card-value currency">{{ rates.sp500 | currency_br(false, 0) }}</div>
-                    <div class="card-label">Índice Standard & Poor's 500</div>
-                </div>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">Ferramentas Poderosas</h2>
+                <p class="section-subtitle">
+                    Tudo que você precisa para tomar decisões financeiras inteligentes
+                </p>
             </div>
-        </div>
 
-        <div class="section">
-            <h3>₿ Criptomoedas</h3>
-            <div class="grid">
-                <div class="card highlight">
-                    <div class="card-header">Bitcoin</div>
-                    <div class="card-value currency">{{ rates.bitcoin | currency_br(false, 0) }}</div>
-                    <div class="card-label">Cotação BTC/BRL</div>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3 class="feature-title">Simulador</h3>
+                    <p class="feature-description">
+                        Calcule o rendimento de seus investimentos com base em diferentes taxas e prazos. 
+                        Entenda o potencial de crescimento do seu dinheiro com projeções precisas.
+                    </p>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        Acessar Simulador
+                    </a>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3 class="feature-title">Comparador</h3>
+                    <p class="feature-description">
+                        Decida entre investir um valor disponível ou utilizá-lo para amortizar dívidas. 
+                        Veja o impacto financeiro de cada escolha ao longo do tempo.
+                    </p>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        Acessar Comparador
+                    </a>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-area"></i>
+                    </div>
+                    <h3 class="feature-title">Histórico</h3>
+                    <p class="feature-description">
+                        Acompanhe a evolução de indicadores financeiros importantes como SELIC, CDI, 
+                        Dólar, Bitcoin e Ibovespa ao longo do tempo com gráficos interativos.
+                    </p>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        Ver Histórico
+                    </a>
                 </div>
             </div>
         </div>
     </section>
-</div>
-{% endblock %}
+
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+        <div class="stats-container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">Taxas e Indicadores Atuais</h2>
+                <p class="section-subtitle">
+                    Acompanhe os principais indicadores econômicos em tempo real
+                </p>
+            </div>
+
+            <div class="stats-grid">
+                <!-- Indicadores Percentuais -->
+                <div class="stats-category fade-in">
+                    <h3 class="category-title">
+                        <i class="fas fa-percentage"></i>
+                        Indicadores Percentuais
+                    </h3>
+                    <div class="stats-items">
+                        <div class="stat-item">
+                            <span class="stat-label">SELIC</span>
+                            <span class="stat-value stat-percentage">12.75%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">CDI</span>
+                            <span class="stat-value stat-percentage">12.65%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">IPCA</span>
+                            <span class="stat-value stat-percentage">3.16%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">IFIX</span>
+                            <span class="stat-value stat-percentage">2.847%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Poupança</span>
+                            <span class="stat-value stat-percentage">8.79%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">INPC</span>
+                            <span class="stat-value stat-percentage">3.08%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Valores Monetários -->
+                <div class="stats-category fade-in">
+                    <h3 class="category-title">
+                        <i class="fas fa-dollar-sign"></i>
+                        Valores Monetários
+                    </h3>
+                    <div class="stats-items">
+                        <div class="stat-item">
+                            <span class="stat-label">Dólar</span>
+                            <span class="stat-value stat-currency">R$ 5.82</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Ibovespa</span>
+                            <span class="stat-value stat-points">R$ 134.193</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">S&P 500</span>
+                            <span class="stat-value stat-points">R$ 5.887</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Criptomoedas -->
+                <div class="stats-category fade-in">
+                    <h3 class="category-title">
+                        <i class="fab fa-bitcoin"></i>
+                        Criptomoedas
+                    </h3>
+                    <div class="stats-items">
+                        <div class="stat-item">
+                            <span class="stat-label">Bitcoin</span>
+                            <span class="stat-value stat-currency">R$ 580.234</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Dynamic loading for stat values (simulate API calls)
+        function updateStats() {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                stat.style.opacity = '0.7';
+                setTimeout(() => {
+                    stat.style.opacity = '1';
+                }, Math.random() * 1000);
+            });
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateStats, 30000);
+
+        // Add click effects to buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (!this.href || this.href.includes('#')) {
+                    e.preventDefault();
+                }
+                
+                // Add ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.3);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add ripple animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Console welcome message
+        console.log(`
+            🚀 Central Financeira
+            ==================
+            Bem-vindo ao sistema!
+            
+            Dicas de desenvolvimento:
+            - Use as ferramentas de desenvolvedor para inspecionar elementos
+            - Teste a responsividade em diferentes tamanhos de tela
+            - Verifique a performance na aba Network
+        `);
+    </script>
+</body>
+</html>

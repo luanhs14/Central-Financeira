@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask, render_template, request, jsonify, send_file
-from datetime import datetime # Certifique-se de que datetime está importado
+from datetime import datetime, timedelta # Certifique-se de que datetime está importado
 import sqlite3
 import os
 import time
@@ -132,9 +132,10 @@ def simulador():
     return render_template('simulador.html', resultado=resultado, erro=erro, now=datetime.now())
 
 
-@app.route('/comparador')
+@app.route('/comparador', methods=['GET', 'POST'])
 def comparador_investimento():
-    # --- CORREÇÃO: Passa 'now' para o template ---
+    if request.method == 'POST':
+        return api_comparar_aporte_mensal()
     return render_template('comparador.html', now=datetime.now())
 
 @app.route('/api/comparar-aporte-mensal', methods=['POST'])
@@ -186,14 +187,20 @@ def api_comparar_aporte_mensal():
 
 @app.route('/historico')
 def historico_page():
-    # --- CORREÇÃO: Passa 'now' para o template ---
-    return render_template('historico.html', now=datetime.now())
+    # Define datas padrão (últimos 30 dias)
+    data_final = datetime.now()
+    data_inicial = data_final - timedelta(days=30)
+    
+    return render_template('historico.html', 
+                         data_inicial_padrao=data_inicial.strftime('%Y-%m-%d'),
+                         data_final_padrao=data_final.strftime('%Y-%m-%d'),
+                         now=datetime.now())
 
 @app.route('/api/historico', methods=['GET'])
 def api_historico():
-    start_date_str = request.args.get('startDate')
-    end_date_str = request.args.get('endDate')
-    assets_param = request.args.get('assets')
+    start_date = request.args.get('startDate')
+    end_date = request.args.get('endDate')
+    assets = request.args.get('assets', '')
 
     conn = sqlite3.connect(app.config['DATABASE'])
     cursor = conn.cursor()
@@ -202,8 +209,8 @@ def api_historico():
     all_assets = ['selic', 'cdi', 'dolar', 'bitcoin', 'ibovespa', 'sp500', 'ifix', 'inpc', 'ipca', 'poupanca']
 
     # Se 'assets' for fornecido, use-o; caso contrário, use todos
-    if assets_param:
-        selected_assets = assets_param.split(',')
+    if assets:
+        selected_assets = assets.split(',')
         # Garante que apenas ativos válidos sejam selecionados
         selected_assets = [asset for asset in selected_assets if asset in all_assets]
         if not selected_assets: # Se a lista ficar vazia após validação, mostrar todos
@@ -212,20 +219,29 @@ def api_historico():
         selected_assets = all_assets
 
     columns_to_select = ['data'] + selected_assets
-    columns_str = ", ".join(columns_to_select)
+    columns_str = ", ".join(f'"{col}"' for col in columns_to_select)  # Adiciona aspas para nomes de colunas
 
     query = f"SELECT {columns_str} FROM ativos"
     conditions = []
     query_params = []
 
-    if start_date_str:
-        conditions.append("data >= ?")
-        # A data do DB agora é YYYY-MM-DD, já compatível
-        query_params.append(start_date_str)
-    if end_date_str:
-        conditions.append("data <= ?")
-        # A data do DB agora é YYYY-MM-DD, já compatível
-        query_params.append(end_date_str)
+    if start_date:
+        try:
+            # Valida e formata a data
+            datetime.strptime(start_date, '%Y-%m-%d')
+            conditions.append("data >= ?")
+            query_params.append(start_date)
+        except ValueError:
+            return jsonify({"error": "Formato de data inicial inválido. Use YYYY-MM-DD."}), 400
+
+    if end_date:
+        try:
+            # Valida e formata a data
+            datetime.strptime(end_date, '%Y-%m-%d')
+            conditions.append("data <= ?")
+            query_params.append(end_date)
+        except ValueError:
+            return jsonify({"error": "Formato de data final inválido. Use YYYY-MM-DD."}), 400
 
     if conditions:
         query += " WHERE " + " AND ".join(conditions)

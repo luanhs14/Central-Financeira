@@ -6,7 +6,7 @@
     <p class="subtitulo">Descubra se é melhor investir mensalmente ou amortizar sua dívida.</p>
     
     <section class="form-section">
-    <form id="comparador-form">
+    <form id="comparador-form" method="POST" action="{{ url_for('api_comparar_aporte_mensal') }}">
         <div class="form-group">
             <label for="valor-disponivel-mensal">Valor disponível por mês (R$):</label>
             <input type="text" id="valor-disponivel-mensal" name="valor_disponivel_mensal" required placeholder="Ex: 790,00">
@@ -32,52 +32,57 @@
             <input type="text" id="valor-total-divida-atual" name="valor_total_divida_atual" placeholder="Opcional para cálculo atual, mas útil para simulações futuras.">
         </div>
         
-        <button type="button" class="btn btn-primary" onclick="calcularComparacao()">Comparar</button>
+        <div class="btn-comparar-container">
+            <button type="submit" class="btn btn-primary">Comparar</button>
+        </div>
     </form>
     </section>
     
     <section class="resultados-section">
-        <h2>Resultados:</h2>
-        <h3>Resultados após <span id="periodo-resultado">-</span> meses:</h3>
+        <h2>Resultado após <span id="periodo-resultado">-</span> meses:</h2>
         
         <div class="comparison-cards-wrapper">
             <div class="comparison-card">
-                <h3><strong>Cenário 1: Investir</strong> os R$ <span class="destaque" id="valor-mensal-investir">-</span> por mês</h3>
+                <h3><strong>Investindo</strong> os R$ <span class="destaque" id="valor-mensal-investir">-</span> por mês</h3>
                 <p>Montante acumulado ao final: <span class="destaque" id="montante-investido">-</span></p>
             </div>
             
             <div class="comparison-card">
-                <h3><strong>Cenário 2: Amortizar</strong> R$ <span class="destaque" id="valor-mensal-amortizar">-</span> por mês</h3>
+                <h3><strong>Amortizando</strong> R$ <span class="destaque" id="valor-mensal-amortizar">-</span> por mês</h3>
                 <p>Economia estimada em juros: <span class="destaque" id="economia-amortizar">-</span></p>
             </div>
         </div>
         
         <div class="recommendation-summary">
-            <h3>Nossa Recomendação é:</h3>
+            <h3>Nossa recomendação é:</h3>
             <p id="recomendacao-principal" class="highlight-recommendation destaque">-</p>
             <p id="recomendacao-diferenca" class="recommendation-difference"></p>
         </div>
+        <div class="buttons-tabela-container">
+            <button id="toggle-monthly-table" type="button" class="btn btn-toggle" onclick="toggleMonthlyTable()">
+                Ver evolução mês a mês
+            </button>
 
-        <button type="button" class="btn btn-toggle" onclick="toggleMonthlyTable()">Ver tabela mês a mês</button>
-
-        <div id="monthly-breakdown" style="display: none; margin-top: 20px;">
-            <h3>Evolução Mês a Mês:</h3>
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>Mês</th>
-                        <th>Investimento Acumulado (R$)</th>
-                        <th>Economia Amortização Acumulada (R$)</th>
-                    </tr>
-                </thead>
-                <tbody id="monthly-table-body">
-                    <!-- Tabela será preenchida dinamicamente -->
-                </tbody>
-            </table>
-            <p class="observacao">Valores aproximados, calculados com base nas taxas fornecidas.</p>
+            <div id="tabela-evolucao" style="display: none;">
+                <div class="comparison-table-container">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th>Investimento Acumulado</th>
+                                <th>Economia Amortização</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthly-table-body">
+                            <!-- Os dados são preenchidos dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                <button onclick="exportToCSV()" class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Exportar para CSV
+                </button>
+            </div>
         </div>
-    </section>
-</div>
 
 <script>
     function formatCurrencyBr(value) {
@@ -189,13 +194,71 @@
     }
 
     function toggleMonthlyTable() {
-        const tableDiv = document.getElementById('monthly-breakdown');
-        tableDiv.style.display = tableDiv.style.display === 'none' ? 'block' : 'none';
+        const tableDiv = document.getElementById('tabela-evolucao');
+        const btn = document.getElementById('toggle-monthly-table');
+        
+        if (tableDiv.style.display === 'none' || tableDiv.style.display === '') {
+            tableDiv.style.display = 'block';
+            btn.textContent = 'Ocultar tabela mês a mês';
+        } else {
+            tableDiv.style.display = 'none';
+            btn.textContent = 'Ver evolução mês a mês';
+        }
+    }
+
+    function exportToCSV() {
+        try {
+            const table = document.querySelector('.comparison-table');
+            if (!table) {
+                alert('Tabela não encontrada para exportação.');
+                return;
+            }
+
+            // Obter os dados da tabela
+            const rows = table.querySelectorAll('tr');
+            let csvContent = '';
+            
+            // Processar cabeçalhos
+            const headers = [];
+            table.querySelectorAll('thead th').forEach(header => {
+                headers.push(`"${header.textContent.trim()}"`);
+            });
+            csvContent += headers.join(';') + '\n';
+            
+            // Processar linhas de dados
+            rows.forEach(row => {
+                const rowData = [];
+                row.querySelectorAll('td').forEach(cell => {
+                    rowData.push(`"${cell.textContent.trim()}"`);
+                });
+                if (rowData.length > 0) {
+                    csvContent += rowData.join(';') + '\n';
+                }
+            });
+            
+            // Criar e disparar o download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `comparacao_financeira_${new Date().toLocaleDateString('pt-BR')}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+        } catch (error) {
+            console.error('Erro ao exportar para CSV:', error);
+            alert('Ocorreu um erro ao exportar os dados. Verifique o console para detalhes.');
+        }
     }
 </script>
 
 <style>
     /* (Manter os estilos CSS existentes) */
+    .resultados-section {
+        display: block !important;
+    }
     .comparison-cards-wrapper {
         display: flex;
         flex-wrap: wrap;
@@ -236,18 +299,25 @@
         margin-bottom: 5px;
     }
     .btn-toggle {
-        background-color: #2563eb;
-        color: white;
+        background-color: var(--primary-color);
+        color: var(--card-bg);
         margin-top: 15px;
         border: none;
-        border-radius: 6px;
-        padding: 10px 20px;
+        border-radius: var(--radius-small);
+        padding: 15px 25px;
         font-weight: 600;
-        font-size: 1em;
+        font-size: 16px;
         transition: background-color 0.3s;
+        cursor: pointer;
+        margin: 20px 0;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .btn-toggle:hover {
-        background-color: #1d4ed8;
+        background-color: var(--primary-dark-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
     .observacao {
         font-size: 0.95em;
@@ -255,10 +325,180 @@
         margin-top: 10px;
         font-style: italic;
     }
+    /* Container específico para os botões da tabela */
+    .buttons-tabela-container {
+        text-align: center;
+        margin: 25px 0;
+        width: 100%;
+    }
+
+    /* Mantém estilo original do botão Comparar */
+    .btn-primary {
+        display: inline-block;
+        margin: 15px 0;
+    }
+
+    /* Alinhamento da tabela */
+    .comparison-table-container {
+        margin: 20px 0;
+        width: 100%;
+        text-align: left;
+    }
+
+    /* Responsividade */
     @media (max-width: 768px) {
         .comparison-cards-wrapper {
             flex-direction: column;
         }
+        
+        /* Estilos específicos para os botões da tabela */
+        .buttons-tabela-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .buttons-tabela-container button {
+            margin: 5px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        /* Mantém responsividade da tabela */
+        .comparison-table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+        
+        .comparison-table {
+            min-width: 600px;
+        }
+        
+        .comparison-table thead th,
+        .comparison-table tbody td {
+            padding: 10px 8px;
+            font-size: 14px;
+        }
+    }
+    @media (max-width: 768px) {
+        .comparison-cards-wrapper {
+            flex-direction: column;
+        }
+        .button-container {
+            flex-direction: row;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    }
+    /* Estilos específicos para a tabela de comparação */
+    .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .comparison-table thead th {
+        background-color: #3b82f6;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .comparison-table tbody td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .comparison-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .comparison-table tbody tr:hover {
+        background-color: rgba(59, 130, 246, 0.05);
+    }
+
+    /* Destaque para a última linha */
+    .comparison-table tbody tr:last-child {
+        font-weight: bold;
+        background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    /* Centraliza apenas o botão Comparar */
+    .btn-comparar-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    /* Mantém o estilo original do botão */
+    .btn-comparar-container .btn-primary {
+        display: inline-block;
+        margin: 0 auto; /* Centraliza horizontalmente */
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .comparison-table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+        
+        .comparison-table {
+            min-width: 600px; /* Força rolagem horizontal em telas pequenas */
+        }
+        
+        .comparison-table thead th,
+        .comparison-table tbody td {
+            padding: 10px 8px;
+            font-size: 14px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .button-container button {
+            margin: 5px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .comparison-table th:nth-child(1),
+        .comparison-table td:nth-child(1) {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 5;
+        }
+        .comparison-table {
+            font-size: 13px;
+        }
+        
+        .comparison-table th, 
+        .comparison-table td {
+            padding: 8px 5px;
+        }
+    }
+
+    .highlight-investment {
+        color: #10b981; /* Verde para investimento */
+    }
+
+    .highlight-amortization {
+        color: #ef4444; /* Vermelho para amortização */
     }
 </style>
 {% endblock %}

@@ -3,71 +3,147 @@
 {% block content %}
 <div class="container">
     <h1 class="page-title">📈 Histórico de Rendimentos</h1>
-
+    
     <div class="filter-section">
-        <h3>Filtros:</h3>
+        <h3>📅 Filtros de Período</h3>
         <div class="date-filters">
             <div class="form-group">
                 <label for="start-date">Data Inicial:</label>
-                <input type="date" id="start-date" class="form-control">
+                <input type="date" id="start-date" class="form-control" value="{{ data_inicial_padrao }}">
             </div>
             <div class="form-group">
                 <label for="end-date">Data Final:</label>
-                <input type="date" id="end-date" class="form-control">
+                <input type="date" id="end-date" class="form-control" value="{{ data_final_padrao }}">
             </div>
         </div>
+        
         <div class="indicator-filters">
-            <label>Mostrar Indicadores:</label>
-            <div class="checkbox-group">
-                <label><input type="checkbox" name="asset" value="selic" checked> SELIC</label>
-                <label><input type="checkbox" name="asset" value="cdi" checked> CDI</label>
-                <label><input type="checkbox" name="asset" value="dolar" checked> Dólar</label>
-                <label><input type="checkbox" name="asset" value="bitcoin" checked> Bitcoin</label>
-                <label><input type="checkbox" name="asset" value="ibovespa" checked> Ibovespa</label>
-                <label><input type="checkbox" name="asset" value="sp500" checked> S&P 500</label>
-                <label><input type="checkbox" name="asset" value="ifix" checked> IFIX</label>
-                <label><input type="checkbox" name="asset" value="inpc" checked> INPC</label>
-                <label><input type="checkbox" name="asset" value="ipca" checked> IPCA</label>
-                <label><input type="checkbox" name="asset" value="poupanca" checked> Poupança</label>
+            <h4>📊 Selecionar Indicadores:</h4>
+            <div class="checkbox-grid">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="selic-check" name="asset" value="selic" checked>
+                    <label for="selic-check">SELIC</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cdi-check" name="asset" value="cdi" checked>
+                    <label for="cdi-check">CDI</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dolar-check" name="asset" value="dolar">
+                    <label for="dolar-check">Dólar (US$)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="bitcoin-check" name="asset" value="bitcoin">
+                    <label for="bitcoin-check">Bitcoin</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ibovespa-check" name="asset" value="ibovespa">
+                    <label for="ibovespa-check">Ibovespa</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sp500-check" name="asset" value="sp500">
+                    <label for="sp500-check">S&P 500</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ifix-check" name="asset" value="ifix">
+                    <label for="ifix-check">IFIX</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="inpc-check" name="asset" value="inpc">
+                    <label for="inpc-check">INPC</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ipca-check" name="asset" value="ipca">
+                    <label for="ipca-check">IPCA</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="poupanca-check" name="asset" value="poupanca">
+                    <label for="poupanca-check">Poupança</label>
+                </div>
             </div>
         </div>
-        <button id="apply-filters-btn" class="btn">Aplicar Filtros</button>
+        
+        <div class="filter-actions">
+            <button id="apply-filters-btn" type="button" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Aplicar Filtros
+            </button>
+            <button id="select-all-btn" type="button" class="btn btn-secondary">
+                <i class="fas fa-check-double"></i> Selecionar Todos
+            </button>
+            <button id="clear-all-btn" type="button" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Limpar Seleção
+            </button>
+        </div>
     </div>
 
-    <div class="chart-container">
-        <canvas id="historicoChart"></canvas>
+    <div class="chart-section">
+        <div class="chart-header">
+            <h3>📈 Evolução dos Indicadores</h3>
+            <div class="chart-info">
+                <span id="chart-period-info">Período selecionado</span>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="historicoChart"></canvas>
+        </div>
+        <div class="chart-legend-info">
+            <small class="text-muted">💡 Dica: Clique nas legendas para mostrar/ocultar indicadores no gráfico</small>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table id="historico-table" class="historico-table">
-            <thead>
-                <tr id="historico-table-header-row">
-                    <th>Data</th>
-                    <th>SELIC</th>
-                    <th>CDI</th>
-                    <th>Dólar</th>
-                    <th>Bitcoin</th>
-                    <th>Ibovespa</th>
-                    <th>S&P 500</th>
-                    <th>IFIX</th>
-                    <th>INPC</th>
-                    <th>IPCA</th>
-                    <th>Poupança</th>
-                </tr>
-            </thead>
-            <tbody id="historico-body">
-                <!-- Dados preenchidos dinamicamente via JavaScript -->
-            </tbody>
-        </table>
+    <div class="table-section">
+        <div class="table-header">
+            <h3>📋 Dados Detalhados</h3>
+            <div class="table-actions">
+                <button id="export-csv-btn" type="button" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-download"></i> Exportar CSV
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <div class="table-scroll-hint">
+                <i class="fas fa-arrows-alt-h"></i> Deslize horizontalmente para ver mais dados
+            </div>
+            <table id="historico-table" class="historico-table">
+                <thead>
+                    <tr id="historico-table-header-row">
+                        <th class="sticky-col">Data</th>
+                        <!-- Cabeçalhos serão inseridos dinamicamente -->
+                    </tr>
+                </thead>
+                <tbody id="historico-table-body">
+                    <tr>
+                        <td colspan="100%" class="loading-cell">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Carregando dados...
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 <script>
+    // Aguarda o carregamento completo
     document.addEventListener('DOMContentLoaded', function() {
-        fetchHistoricoData();
-        document.getElementById('apply-filters-btn').addEventListener('click', fetchHistoricoData);
+        // Verifica se o Chart.js está disponível
+        if (typeof Chart !== 'function') {
+            console.error('Chart.js não foi carregado corretamente!');
+            return;
+        }
+        
+        // Inicializa a página de histórico
+        if (typeof initHistoricoPageSafe === 'function') {
+            initHistoricoPageSafe();
+        } else {
+            console.error('Função de inicialização não encontrada!');
+        }
     });
 </script>
 {% endblock %}
